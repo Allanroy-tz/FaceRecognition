@@ -11,12 +11,13 @@ class FaceDetector:
     def DrawFace(self, img):
         img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         face = self.ImgFaceDetect(img_gray)
+        print(face)
         for x, y, w, h in face:
             cv.rectangle(img, (x, y), (x + w, y + h), color=(0, 0, 255), thickness=2)
         return img
 
 
-# img = cv.imread('../../ImageData/2.jpg')
+# img = cv.imread('../../ImageData/mcs.jpg')
 # detector = FaceDetector()
 # img = detector.DrawFace(img)
 # cv.imshow("test", img)

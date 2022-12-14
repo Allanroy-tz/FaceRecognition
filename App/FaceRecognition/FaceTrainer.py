@@ -7,9 +7,9 @@ from App.FaceRecognition.FaceDetector import FaceDetector
 
 
 class FaceTrainer:
-    trainer_path = '../../trainer/trainer.yml'
+    trainer_path = 'trainer/trainer.yml'
 
-    img_path = '../../ImageData/train'
+    img_path = 'ImageData/train'
 
     def GetImageAndLabels(self, path):
         # 存储人脸信息
@@ -46,6 +46,4 @@ class FaceTrainer:
         recognizer.train(faces, np.array(ids))
         # 保存文件
         recognizer.write(self.trainer_path)
-
-trainer=FaceTrainer()
-trainer.train()
+        print("训练完成")

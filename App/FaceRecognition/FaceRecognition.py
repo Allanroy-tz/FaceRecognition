@@ -4,11 +4,12 @@ import numpy as np
 from PIL import ImageFont, ImageDraw, Image
 
 from App.FaceRecognition.FaceDetector import FaceDetector
+from App.MysqlHelper import MysqlHelper
 
 
 class FaceRecognition:
     recogizer = cv.face.LBPHFaceRecognizer_create()
-    recogizer.read('../../trainer/trainer.yml')
+    recogizer.read('trainer/trainer.yml')
 
     def Recongnition(self, img):
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -26,14 +27,19 @@ class FaceRecognition:
             print("标签id:", ids, "置信评分:", confidence)
             if confidence > 80:
                 draw.text((10, 10), "未知人脸", font=font1, fill=(0, 0, 255))
+                img = np.array(img_cv)
+                cv.imshow("2",img)
+                return img, "未知"
             else:
-                draw.text((10, 10), '2', font=font1, fill=(0, 0, 255))
-        img = np.array(img_cv)
-        cv.imshow("result", img)
-        return img
+                sql = MysqlHelper()
+                name = sql.FindLabel(ids)
+                name=name.iloc[0].values[0]
+                draw.text((10, 10), name, font=font1, fill=(0, 0, 255))
+                img = np.array(img_cv)
+                return img, name
 
-img=cv.imread('../../ImageData/mcs.jpg')
-recogizer=FaceRecognition()
-recogizer.Recongnition(img)
-cv.waitKey(0)
-cv.destroyAllWindows()
+# img=cv.imread('ImageData/2.jpg')
+# recogizer=FaceRecognition()
+# recogizer.Recongnition(img)
+# cv.waitKey(0)
+# cv.destroyAllWindows()

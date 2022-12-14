@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <div>识别</div>
+    <div class="container">
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <label>请选择一个图像文件：</label>
+            <input type="file" id="file_input" multiple name="img"/> <!--用input标签并选择type=file，记得带上multiple，不然就只能单选图片了-->
+            <input type="submit" id="submit" value="识别"> <span>{{submit}}:{{ result }}</span>
+        </form>
+    </div>
+{% endblock %}

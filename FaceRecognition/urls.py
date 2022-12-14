@@ -19,5 +19,7 @@ from App import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('', views.index)
+    path('', views.home),
+    path('faceEntering/', views.faceEntering),
+    path('faceRecognition/', views.faceRecognition)
 ]

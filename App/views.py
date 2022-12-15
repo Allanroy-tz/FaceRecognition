@@ -65,5 +65,5 @@ def faceRecognition(request):
         img_re = cv.imread(img_path)
         re = FaceRecognition()
 
-        img, name = re.Recongnition(img_re)
+        img_result, name = re.Recongnition(img_re)
         return render(request, 'faceRecognition.html', {'result': name})

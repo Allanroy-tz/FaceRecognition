@@ -1,49 +1,75 @@
 {% extends 'layout.html' %}
-
+{% load static %}
 {% block content %}
-    <div>录入</div>
-    <div class="container">
-        <form enctype="multipart/form-data" method="post">
+
+    <div class="container col-md-4 col-lg-offset-1 ">
+        <h1 >录入</h1><br/><br/>
+        <form enctype="multipart/form-data" method="post" onsubmit="return formsubmit()">
             {% csrf_token %}
-            <label>请选择一个图像文件：</label>
-            <label>输入名称</label>
-            <input name="name" type="text">
-            <input type="file" id="file_input" multiple name="img"/> <!--用input标签并选择type=file，记得带上multiple，不然就只能单选图片了-->
-            <input type="submit" id="submit" value="提交"> <span>{{submit}}</span>
+            <div class="form-group">
+                <label>输入名称</label>
+                <input name="name" type="text" class="form-control" id="name_input">
+            </div>
+            <div class="form-group">
+                <label >请选择一个图像文件：</label>
+                <input type="file" id="file_input" multiple name="img" class="file-upload"/>
+                <!--用input标签并选择type=file，记得带上multiple，不然就只能单选图片了-->
+            </div>
+            <div class="form-group">
+                <button type="submit" id="submit" class="btn btn-block btn-lg">提交</button>
+            </div>
+            <span class="text-success" style="font-style: italic;font-size: 30px">{{ submit }}提交成功</span>
         </form>
         <form method="post">
             {% csrf_token %}
-            <input type="text" hidden="hidden" name="train" value="1">
-            <input type="submit" value="训练"/><span>{{train}}</span>
+            <div class="form-group"><input type="text" hidden="hidden" name="train" value="1">
+                <button type="submit" class="btn btn-block btn-lg btn-primary" onclick="trainCilck()">训练</button>
+            </div>
+
+            <span class="text-success" style="font-style: italic;font-size: 30px">{{ train }}训练完成</span>
         </form>
+    </div>
+    <div class=" container col-md-4 col-lg-offset-1" id="viewImg">
     </div>
 
 
 
+    <script type="text/javascript">function trainCilck() {
+        alert("正在训练")
+    }
+
+    function formsubmit() {
+            var file_input = document.getElementById("file_input");
+            var name_input = document.getElementById("name_input");
+            if(file_input.value.length===0) {
+                alert("请选择图片")
+                return false
+            }
+            if(name_input.value==='')
+            {
+                alert("请输入名称")
+                return false
+            }
+            else return alert('正在提交')
+
+    }
 
 
+    window.onload = function () {
 
-
-
-    <script type="text/javascript">
-
-        window.onload = function () {
             var input = document.getElementById("file_input");
             var result;
             var dataArr = []; // 储存所选图片的结果(文件名和base64数据)
             var fd;  //FormData方式发送请求
-            var oSubmit = document.getElementById("submit");
-            var oInput = document.getElementById("file_input");
-
+            var viewImg=document.getElementById('viewImg');
             if (typeof FileReader === 'undefined') {
                 alert("抱歉，你的浏览器不支持 FileReader");
                 input.setAttribute('disabled', 'disabled');
             } else {
                 input.addEventListener('change', readFile, false);
             }　　　　　//handler
-
-
             function readFile() {
+                viewImg.innerHTML = "";
                 fd = new FormData();
                 var iLen = this.files.length;
                 for (var i = 0; i < iLen; i++) {
@@ -61,11 +87,11 @@
                             base64: this.result   //reader.readAsDataURL方法执行完后，base64数据储存在reader.result里
                         }
                         dataArr.push(imgMsg);
-                        result = '<div class="delete">delete</div><div class="result"><img class="subPic" src="' + this.result + '" alt="' + this.fileName + '"/></div>';
+                        result = '<div class="result"><img class="img-thumbnail" src="' + this.result + '" alt="' + this.fileName + '"/></div>';
                         var div = document.createElement('div');
                         div.innerHTML = result;
                         div['className'] = 'float';
-                        document.getElementsByTagName('body')[0].appendChild(div);  　　//插入dom树
+                        viewImg.appendChild(div);　　//插入dom树
                         var img = div.getElementsByTagName('img')[0];
                         img.onload = function () {
                             var nowHeight = ReSizePic(this); //设置图片大小
@@ -76,51 +102,15 @@
                             }
                         }
                         div.onclick = function () {
-                            $(this).remove();                  // 在页面中删除该图片元素
+                            //$(this).remove();                  // 在页面中删除该图片元素
                         }
                     }
                 }
             }
-
-
-            function send() {
-                $.ajax({
-                    url: '/',
-                    type: 'post',
-                    data: JSON.stringify(dataArr),
-                    dataType: 'json',
-                    //processData: false,   用FormData传fd时需有这两项
-                    //contentType: false,
-                    success: function (data) {
-                        console.log('返回的数据：' + JSON.stringify(data))
-                    }
-                })
-                console.log(dataArr)
-            }
-
-
-            oSelect.onclick = function () {
-                oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
-                //清空已选图片
-                $('.float').remove();
-                oInput.click();
-            }
-
-
-            oAdd.onclick = function () {
-                oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
-                oInput.click();
-            }
-
-
-            oSubmit.onclick = function () {
-                if (!dataArr.length) {
-                    return alert('请先选择文件');
-                }
-                //send();
-            }
         }
-
+        document.getElementById('submit').onclick=function (){
+            console.log("点击了提交")
+        }
         /*
          用ajax发送fd参数时要告诉jQuery不要去处理发送的数据，
          不要去设置Content-Type请求头才可以发送成功，否则会报“Illegal invocation”的错误，

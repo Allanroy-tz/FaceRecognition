@@ -1,5 +1,15 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <div>首页</div>
+
+    <div class="jumbotron">
+        <h1 >人脸识别系统<small>---“夸夸队”的uml选题原型系统</small></h1>
+        <p>模型:基于OpenCv的人脸识别模型</p>
+        <p>系统框架:Django+pymysql</p>
+        <p>主题框架:BootStrap3</p>
+        <p>数据库:mysql</p>
+        <br/>
+        <div><a class="btn btn-primary btn-lg" href="/faceEntering" role="button">录入信息</a>
+            <a  class="btn btn-primary btn-lg" href="/faceRecognition" role="button" style="margin-left: 20px">人脸识别</a></div>
+    </div>
 {% endblock %}

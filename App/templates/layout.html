@@ -11,30 +11,41 @@
 </head>
 
 <body>
-<nav class="navbar navbar-default" id="myTabs">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">首页</a>
-    </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class=""><a href="/faceRecognition">识别 <span class="sr-only">(current)</span></a></li>
-        <li><a href="/faceEntering">录入</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+    <style>
+       p {
+           font-family: 华文中宋;
+       }
+       h1{
+           font-family: 华文楷体;
+           font-size: 63px;
+       }
+    </style>
+<nav class="navbar navbar-default" id="myTabs" style="margin-bottom:0">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">首页</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class=""><a href="/faceRecognition">识别 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/faceEntering">录入</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
 </nav>
-
-<div>
-    {% block content %}
-    {% endblock %}
+<div class="container-fluid">
+    <div class="row">
+        {% block content %}
+        {% endblock %}
+    </div>
 </div>
+
 </body>
 <script>
     $('#myTabs li').click(function (e) {
         $(this).addClass("active")
-})
+    })
 </script>
 </html>

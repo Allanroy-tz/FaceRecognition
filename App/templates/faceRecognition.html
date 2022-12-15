@@ -1,13 +1,108 @@
 {% extends 'layout.html' %}
 {% load static %}
 {% block content %}
-    <div>识别</div>
-    <div class="container">
-        <form enctype="multipart/form-data" method="post">
+
+    <div class="container col-md-4 col-lg-offset-1">
+        <h1 >识别</h1>
+        <br/><br/>
+
+        <form enctype="multipart/form-data" method="post" onsubmit="return formsubmit()">
             {% csrf_token %}
-            <label>请选择一个图像文件：</label>
-            <input type="file" id="file_input" multiple name="img"/> <!--用input标签并选择type=file，记得带上multiple，不然就只能单选图片了-->
-            <input type="submit" id="submit" value="识别"> <span>{{submit}}:{{ result }}</span>
+            <div class="form-group">
+                <label>请选择一个图像文件：</label>
+                <input type="file" id="file_input" class="input-group-lg" name="img"/>
+            </div>
+            <div class="form-group">
+                <button type="submit" id="submit" class="btn btn-block btn-lg btn-success">识别</button>
+                <div style="font-style: italic;font-size: 30px">识别结果:<span class="text-success">{{ result }}</span></div>
+            </div>
         </form>
     </div>
+    <div class=" container col-md-4 col-lg-offset-1" id="viewImg">
+    </div>
+
+
+    <script>
+        window.onload = function () {
+            var input=document.getElementById('file_input')
+            var result;
+            var dataArr = []; // 储存所选图片的结果(文件名和base64数据)
+            var fd;  //FormData方式发送请求
+            var viewImg=document.getElementById('viewImg');
+            if (typeof FileReader === 'undefined') {
+                alert("抱歉，你的浏览器不支持 FileReader");
+                input.setAttribute('disabled', 'disabled');
+            } else {
+                input.addEventListener('change', readFile, false);
+            }　　　　　//handler
+            function readFile() {
+                viewImg.innerHTML = "";
+                fd = new FormData();
+                var iLen = this.files.length;
+                for (var i = 0; i < iLen; i++) {
+                    if (!input['value'].match(/.jpg|.gif|.png|.jpeg|.bmp/i)) {　　//判断上传文件格式
+                        return alert("上传的图片格式不正确，请重新选择");
+                    }
+                    var reader = new FileReader();
+                    fd.append(i, this.files[i]);
+                    reader.readAsDataURL(this.files[i]);  //转成base64
+                    reader.fileName = this.files[i].name;
+
+                    reader.onload = function (e) {
+                        var imgMsg = {
+                            name: this.fileName,//获取文件名
+                            base64: this.result   //reader.readAsDataURL方法执行完后，base64数据储存在reader.result里
+                        }
+                        dataArr.push(imgMsg);
+                        result = '<div class="result"><img class="img-thumbnail" src="' + this.result + '" alt="' + this.fileName + '"/></div>';
+                        var div = document.createElement('div');
+                        div.innerHTML = result;
+                        div['className'] = 'float';
+                        viewImg.appendChild(div);　　//插入dom树
+                        var img = div.getElementsByTagName('img')[0];
+                        img.onload = function () {
+                            var nowHeight = ReSizePic(this); //设置图片大小
+                            this.parentNode.style.display = 'block';
+                            var oParent = this.parentNode;
+                            if (nowHeight) {
+                                oParent.style.paddingTop = (oParent.offsetHeight - nowHeight) / 2 + 'px';
+                            }
+                        }
+                        div.onclick = function () {
+                            //$(this).remove();                  // 在页面中删除该图片元素
+                        }
+                    }
+                }
+            }
+        }
+     function ReSizePic(ThisPic) {
+            var RePicWidth = 400; //这里修改为您想显示的宽度值
+
+            var TrueWidth = ThisPic.width; //图片实际宽度
+            var TrueHeight = ThisPic.height; //图片实际高度
+
+            if (TrueWidth > TrueHeight) {
+                //宽大于高
+                var reWidth = RePicWidth;
+                ThisPic.width = reWidth;
+                //垂直居中
+                var nowHeight = TrueHeight * (reWidth / TrueWidth);
+                return nowHeight;  //将图片修改后的高度返回，供垂直居中用
+            } else {
+                //宽小于高
+                var reHeight = RePicWidth;
+                ThisPic.height = reHeight;
+            }
+        }
+
+    function formsubmit() {
+            var input = document.getElementById("file_input");
+            if(input.value.length===0) {
+                alert("请选择图片")
+                return false
+            }
+            else return alert('正在识别')
+
+    }
+    </script>
 {% endblock %}
